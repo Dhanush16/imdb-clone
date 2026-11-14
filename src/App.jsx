@@ -4,8 +4,34 @@ import { Navbar } from "./components/Navbar";
 import { Watchlist } from "./components/Watchlist";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import "./App.css";
+import { useState, useEffect } from "react";
 
 function App() {
+  let [watchlist, setWatchList] = useState([]);
+
+  let handleAddtoWatchlist = (movieObj) => {
+    let newWatchList = [...watchlist, movieObj];
+    localStorage.setItem('moviesApp', JSON.stringify(newWatchList));
+    setWatchList(newWatchList);
+    console.log(newWatchList);
+  }
+
+  let handleRemoveFromWatchlist = (movieObj) => {
+    let newWatchList = watchlist.filter((movie) => movie.id != movieObj.id);
+    localStorage.setItem('moviesApp', JSON.stringify(newWatchList));
+    setWatchList(newWatchList);
+    console.log(newWatchList);
+  }
+
+  useEffect(() => {
+    let data = localStorage.getItem('moviesApp');
+    if(!data){
+      return;
+    }
+    setWatchList(JSON.parse(data));
+    console.log(JSON.parse(data));
+  },[]);
+
   return (
     <>
       <BrowserRouter>
@@ -16,11 +42,11 @@ function App() {
             element={
               <>
                 <Banner />
-                <Movies />
+                <Movies handleAddtoWatchlist={handleAddtoWatchlist} handleRemoveFromWatchlist={handleRemoveFromWatchlist} watchlist={watchlist}/>
               </>
             }
           />
-          <Route path="/watchlist" element={<Watchlist />} />
+          <Route path="/watchlist" element={<Watchlist watchlist={watchlist} setWatchList={setWatchList} handleRemoveFromWatchlist={handleRemoveFromWatchlist}/>} />
         </Routes>
       </BrowserRouter>
     </>

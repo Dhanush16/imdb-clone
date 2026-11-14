@@ -3,7 +3,7 @@ import { MovieCard } from './MovieCard'
 import axios from 'axios';
 import { Pagination } from './Pagination';
 
-export const Movies = () => {
+export const Movies = ({ handleAddtoWatchlist, handleRemoveFromWatchlist, watchlist }) => {
   const [movies, setMovies] = useState([]);
   const [pageNo, setPageNo] = useState(1);
 
@@ -21,6 +21,7 @@ export const Movies = () => {
   useEffect(() => {
     axios.get(`https://api.themoviedb.org/3/movie/popular?api_key=2d9add74bc0757a5650f8f753c038e4a&language=en-US&page=${pageNo}`).then(function(res){
       setMovies(res.data.results);
+      console.log(res.data.results);
     })
   },[pageNo])
   return (
@@ -30,7 +31,13 @@ export const Movies = () => {
       </div>
       <div className='flex felx-col flex-wrap justify-around gap-8'>
         {movies.map((movieObj)=>{
-          return <MovieCard poster_path={movieObj.poster_path} name={movieObj.original_title}/>
+          return <MovieCard key={movieObj.id} 
+          movieObj={movieObj} 
+          poster_path={movieObj.poster_path} 
+          name={movieObj.original_title} 
+          watchlist={watchlist}
+          handleAddtoWatchlist={handleAddtoWatchlist}
+          handleRemoveFromWatchlist = {handleRemoveFromWatchlist}/>
         })}
       </div>
       <Pagination pageNo={pageNo} handleNext={handleNext} handlePrev={handlePrev}/>
